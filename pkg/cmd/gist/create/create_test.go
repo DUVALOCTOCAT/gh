@@ -8,7 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/cli/cli/internal/run"
+	"github.com/cli/cli/test"
+
 	"github.com/cli/cli/pkg/cmd/gist/shared"
 	"github.com/cli/cli/pkg/cmdutil"
 	"github.com/cli/cli/pkg/httpmock"
@@ -291,10 +292,11 @@ func Test_createRun(t *testing.T) {
 		io, stdin, stdout, stderr := iostreams.Test()
 		tt.opts.IO = io
 
-		cs, teardown := run.Stub()
-		defer teardown(t)
+		cs, cmdTeardown := test.InitCmdStubber()
+		defer cmdTeardown()
+
 		if tt.opts.WebMode {
-			cs.Register(`https://gist\.github\.com/aa5a315d61ae9438b18d$`, 0, "")
+			cs.Stub("")
 		}
 
 		t.Run(tt.name, func(t *testing.T) {
@@ -312,6 +314,12 @@ func Test_createRun(t *testing.T) {
 			assert.Equal(t, tt.wantOut, stdout.String())
 			assert.Equal(t, tt.wantStderr, stderr.String())
 			assert.Equal(t, tt.wantParams, reqBody)
+
+			if tt.opts.WebMode {
+				browserCall := cs.Calls[0].Args
+				assert.Equal(t, browserCall[len(browserCall)-1], "https://gist.github.com/aa5a315d61ae9438b18d")
+			}
+
 			reg.Verify(t)
 		})
 	}
