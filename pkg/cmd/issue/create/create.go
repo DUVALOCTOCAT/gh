@@ -103,6 +103,7 @@ func NewCmdCreate(f *cmdutil.Factory, runF func(*CreateOptions) error) *cobra.Co
 				return action.ActionLabels(cmd).Invoke(args).Filter(parts).ToA()
 			}),
 			"milestone": action.ActionMilestones(cmd),
+			"project":   action.ActionProjects(cmd),
 		})
 	})
 

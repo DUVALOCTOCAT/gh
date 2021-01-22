@@ -166,7 +166,7 @@ func NewCmdCreate(f *cmdutil.Factory, runF func(*CreateOptions) error) *cobra.Co
 				return action.ActionLabels(cmd).Invoke(args).Filter(parts).ToA()
 			}),
 			"milestone": action.ActionMilestones(cmd),
-			// TODO "project": ActionProjects(),
+			"project":   action.ActionProjects(cmd),
 			"reviewer": carapace.ActionMultiParts(",", func(args, parts []string) carapace.Action {
 				return action.ActionAssignableUsers(cmd).Invoke(args).Filter(parts).ToA()
 			}),
